@@ -29,8 +29,8 @@ jobs:
       - name: Login to GitHub Packages Container registry
         uses: docker/login-action@v3
         with:
-          registry: docker.io
-          username: ${{ env.DOCKERHUB_USERNAME }}
+#          registry: docker.io
+          username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Deploy policy bundle to docker.io (for backwards compatibility)
         run: |
