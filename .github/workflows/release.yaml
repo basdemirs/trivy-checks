@@ -15,6 +15,9 @@ on:
         default: 'test'
 env:
   GH_USER: aqua-sb-bot
+  RELEASE_VERSION: v0
+  MAJOR_VERSION: v0.0
+  MINOR_VERSION: v0.0.1
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,13 +37,19 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Deploy policy bundle to docker.io (for backwards compatibility)
         run: |
-            oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/trivy-policies:$GITHUB_SHA \
-            --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
-            --annotation "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
-            --annotation "org.opencontainers.image.revision=$GITHUB_SHA" \
-            bundle.tar.gz:application/vnd.cncf.openpolicyagent.layer.v1.tar+gzip
+          tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
+          for tag in ${tags[@]}; do
+              oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/trivy-policies:${tag} \
+              --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
+              --annotation "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+              --annotation "org.opencontainers.image.revision=$GITHUB_SHA" \
+              bundle.tar.gz:application/vnd.cncf.openpolicyagent.layer.v1.tar+gzip
+          done
       - name: Deploy checks bundle to docker.io
         run: |
-            oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ github.repository }}:$GITHUB_SHA \
-            --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
-            bundle.tar.gz:application/vnd.cncf.openpolicyagent.layer.v1.tar+gzip
+          tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
+          for tag in ${tags[@]}; do
+              oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ github.repository }}:${tag} \
+              --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
+              bundle.tar.gz:application/vnd.cncf.openpolicyagent.layer.v1.tar+gzip
+          done
