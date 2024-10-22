@@ -37,7 +37,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Deploy policy bundle to docker.io (for backwards compatibility)
         run: |
-          tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
+#          tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
+          tags=(latest)
           for tag in ${tags[@]}; do
               oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/trivy-policies:${tag} \
               --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
@@ -47,7 +48,8 @@ jobs:
           done
       - name: Deploy checks bundle to docker.io
         run: |
-          tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
+#          tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
+          tags=(latest)
           for tag in ${tags[@]}; do
               oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ github.repository }}:${tag} \
               --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
