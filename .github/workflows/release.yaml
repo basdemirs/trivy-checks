@@ -3,8 +3,18 @@ on:
   push:
     tags:
       - "v*"
-env:
-  GH_USER: aqua-bot
+   workflow_dispatch:
+     inputs:
+       logLevel:
+         description: 'Log level'
+         required: true
+         default: 'warning'
+       environment:
+         description: 'Environment to deploy'
+         required: false
+         default: 'test'
+# env:
+#  GH_USER: aqua-bot
 jobs:
   build:
     runs-on: ubuntu-latest
