@@ -36,7 +36,7 @@ jobs:
         run: |
           tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
           for tag in ${tags[@]}; do
-              oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/aquasecurity/trivy-policies:${tag} \
+              oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/trivy-policies:${tag} \
               --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
               --annotation "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
               --annotation "org.opencontainers.image.revision=$GITHUB_SHA" \
