@@ -19,14 +19,14 @@ jobs:
       - name: Login to GitHub Packages Container registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ env.GH_USER }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Deploy policy bundle to ghcr.io (for backwards compatibility)
+          registry: docker.io
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Deploy policy bundle to docker.io (for backwards compatibility)
         run: |
           tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
           for tag in ${tags[@]}; do
-              oras push ghcr.io/aquasecurity/trivy-policies:${tag} \
+              oras push docker.io/${{ env.DOCKERHUB_USERNAME }}/aquasecurity/trivy-policies:${tag} \
               --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
               --annotation "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
               --annotation "org.opencontainers.image.revision=$GITHUB_SHA" \
@@ -36,7 +36,7 @@ jobs:
         run: |
           tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
           for tag in ${tags[@]}; do
-              oras push ghcr.io/${{ github.repository }}:${tag} \
+              oras push docker.io/${{ env.DOCKERHUB_USERNAME }}/${{ github.repository }}:${tag} \
               --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
               bundle.tar.gz:application/vnd.cncf.openpolicyagent.layer.v1.tar+gzip
           done
