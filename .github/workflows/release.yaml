@@ -13,8 +13,8 @@ on:
         description: 'Environment to deploy'
         required: false
         default: 'test'
-# env:
-#  GH_USER: aqua-bot
+env:
+  GH_USER: aqua-sb-bot
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,9 +44,6 @@ jobs:
           done
       - name: Deploy checks bundle to docker.io
         run: |
-          tags=(latest ${{ env.RELEASE_VERSION}} ${{env.MINOR_VERSION }} ${{ env.MAJOR_VERSION }})
-          for tag in ${tags[@]}; do
-              oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ github.repository }}:${tag} \
-              --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
-              bundle.tar.gz:application/vnd.cncf.openpolicyagent.layer.v1.tar+gzip
-          done
+          oras push docker.io/${{ vars.DOCKERHUB_USERNAME }}/${{ github.repository }}:$GITHUB_SHA \
+          --artifact-type application/vnd.cncf.openpolicyagent.config.v1+json \
+          bundle.tar.gz:application/vnd.cncf.openpolicyagent.layer.v1.tar+gzip
